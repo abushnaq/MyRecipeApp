@@ -23,11 +23,16 @@ struct ContentView: View {
     }
     @State var searchText = ""
     
-    var recipeFetcher = RecipeFetcher()
+    var recipeFetcher = RecipeFetcher(recipeURL)
     
     fileprivate func fetchRecipes() async {
-        let fetchedRecipes = await recipeFetcher.fetchRecipes()
-        recipes = [Recipe]()
+        do
+        {
+            let fetchedRecipes = try await recipeFetcher.fetchRecipes()
+            recipes = fetchedRecipes
+        } catch {
+            recipes = [Recipe]()
+        }
     }
     
     fileprivate func refreshToolbarItem() -> ToolbarItem<(), Button<Image>> {
