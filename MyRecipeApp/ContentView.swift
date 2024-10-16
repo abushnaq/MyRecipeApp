@@ -2,20 +2,45 @@
 //  ContentView.swift
 //  MyRecipeApp
 //
-//  Created by Ahmad Remote on 10/16/24.
+//  Created by Ahmad Bushnaq on 10/16/24.
 //
 
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    @State var recipies : [Recipe] = [Recipe]()
+    var filteredRecipies : [Recipe] {
+        if searchText.isEmpty {
+            return recipies
+        } else {
+            return recipies.filter { recipe in
+                recipe.name.localizedCaseInsensitiveContains(searchText) ||
+                recipe.cuisine.localizedCaseInsensitiveContains(searchText)
+            }
         }
-        .padding()
+    }
+    @State var searchText = ""
+    
+    var recipieFetcher = RecipeFetcher()
+    
+    var body: some View {
+        NavigationView
+        {
+            List() {
+                ForEach(filteredRecipies) { recipe in
+                        RecipieListRow(recipieImage: recipe.smallPhotoURL, recipieName: recipe.name, cuisine: recipe.cuisine)
+                    }
+            }.searchable(text: $searchText, prompt: "Search recipes")
+        }
+            .navigationTitle(Text("My Recipie App"))
+            .onAppear()
+        {
+            Task
+            {
+                let fetchedRecipies = await recipieFetcher.fetchRecipies()
+                recipies = fetchedRecipies
+            }
+        }
     }
 }
 
