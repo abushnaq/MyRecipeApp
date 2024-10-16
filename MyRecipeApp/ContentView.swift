@@ -7,13 +7,15 @@
 
 import SwiftUI
 
+let kEmptyData = "No data returned. Please try again later."
+
 struct ContentView: View {
-    @State var recipies : [Recipe] = [Recipe]()
-    var filteredRecipies : [Recipe] {
+    @State var recipes : [Recipe] = [Recipe]()
+    var filteredRecipes : [Recipe] {
         if searchText.isEmpty {
-            return recipies
+            return recipes
         } else {
-            return recipies.filter { recipe in
+            return recipes.filter { recipe in
                 recipe.name.localizedCaseInsensitiveContains(searchText) ||
                 recipe.cuisine.localizedCaseInsensitiveContains(searchText)
             }
@@ -21,24 +23,58 @@ struct ContentView: View {
     }
     @State var searchText = ""
     
-    var recipieFetcher = RecipeFetcher()
+    var recipeFetcher = RecipeFetcher()
+    
+    fileprivate func fetchRecipes() async {
+        let fetchedRecipes = await recipeFetcher.fetchRecipes()
+        recipes = [Recipe]()
+    }
+    
+    fileprivate func refreshToolbarItem() -> ToolbarItem<(), Button<Image>> {
+        return ToolbarItem() {
+            Button(action: {
+                Task
+                {
+                    await fetchRecipes()
+                }
+            })
+            {
+                Image(systemName: "arrow.clockwise")
+            }
+            
+        }
+    }
     
     var body: some View {
         NavigationView
         {
+            if recipes.count == 0
+            {
+                // how to remove duplicates
+                NoDataView(errorMessage: kEmptyData)
+                    .toolbar()
+                {
+                    refreshToolbarItem()
+                }.navigationTitle("My Recipes")
+            }
             List() {
-                ForEach(filteredRecipies) { recipe in
-                        RecipieListRow(recipieImage: recipe.smallPhotoURL, recipieName: recipe.name, cuisine: recipe.cuisine)
-                    }
+                ForEach(filteredRecipes) { recipe in
+                    RecipeListRow(recipeImage: recipe.smallPhotoURL, recipeName: recipe.name, cuisine: recipe.cuisine)
+                }
             }.searchable(text: $searchText, prompt: "Search recipes")
+                .navigationTitle("My Recipes")
+            
+                .toolbar()
+            {
+                refreshToolbarItem()
+            }
         }
-            .navigationTitle(Text("My Recipie App"))
+        
             .onAppear()
         {
             Task
             {
-                let fetchedRecipies = await recipieFetcher.fetchRecipies()
-                recipies = fetchedRecipies
+                await fetchRecipes()
             }
         }
     }
