@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// Simple view to display error or no data state.
 struct NoDataView: View {
     var errorMessage : String = ""
     init(errorMessage: String) {

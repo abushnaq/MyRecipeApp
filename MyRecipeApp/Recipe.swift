@@ -8,6 +8,7 @@
 import Foundation
 
 struct Recipe: Codable, Identifiable {
+    // we use the `CodingKeys` enum to translate from JSON key names to names of variables in this struct.
     enum CodingKeys: String, CodingKey {
         case cuisine = "cuisine"
         case name = "name"
@@ -18,19 +19,12 @@ struct Recipe: Codable, Identifiable {
         case youtubeURL = "youtube_url"
     }
     
-    var cuisine : String
-    var name : String
-    var largePhotoURL : String
-    var smallPhotoURL : String
-    var sourceURL : URL?
-    var uuid : String
-    var youtubeURL : URL?
+    let cuisine : String
+    let name : String
+    let largePhotoURL : String
+    let smallPhotoURL : String
+    let sourceURL : URL?
+    let uuid : String
+    let youtubeURL : URL?
     var id: String { uuid }
-//    "cuisine": "Polish",
-//                "name": "Rogaliki (Polish Croissant Cookies)",
-//                "photo_url_large": "https://d3jbb8n5wk0qxi.cloudfront.net/photos/15d50359-5f62-4583-a9e9-d761bc58fecf/large.jpg",
-//                "photo_url_small": "https://d3jbb8n5wk0qxi.cloudfront.net/photos/15d50359-5f62-4583-a9e9-d761bc58fecf/small.jpg",
-//                "source_url": "https://www.food.com/recipe/rogaliki-polish-croissant-cookies-with-jam-filling-200668",
-//                "uuid": "e084dc2c-37e7-4600-9b46-76e673e8e2d2",
-//                "youtube_url": "https://www.youtube.com/watch?v=VAR10T9mfhU"
 }

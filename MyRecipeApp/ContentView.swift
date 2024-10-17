@@ -21,46 +21,25 @@ import SwiftUI
 let kEmptyData = "No data returned. Please try again later."
 
 struct ContentView: View {
+    // master list of all recipes returned by the API
     @State var recipes : [Recipe] = [Recipe]()
+    // We use a boolean rather than check for empty recipes to distinguish between we haven't loaded yet vs we tried to load and got nothing.
     @State var showEmptyDataView : Bool = false
+    @State var searchText = ""
+    
+    // recipeURL is defined in the RecipeFetcher class
+    var recipeFetcher = RecipeFetcher(recipeURL)
+    
     var filteredRecipes : [Recipe] {
         if searchText.isEmpty {
+            // if we're not searching for anythign return the whole list.
             return recipes
         } else {
+            // otherwise filter the list based on searches in the cuisine or name
             return recipes.filter { recipe in
                 recipe.name.localizedCaseInsensitiveContains(searchText) ||
                 recipe.cuisine.localizedCaseInsensitiveContains(searchText)
             }
-        }
-    }
-    @State var searchText = ""
-    
-    var recipeFetcher = RecipeFetcher(recipeURL)
-    
-    fileprivate func fetchRecipes() async {
-        do
-        {
-            let fetchedRecipes = try await recipeFetcher.fetchRecipes()
-            recipes = fetchedRecipes
-            if recipes.isEmpty
-            {
-                showEmptyDataView = true
-            }
-        } catch {
-            recipes = [Recipe]()
-            showEmptyDataView = true
-        }
-    }
-    
-    fileprivate func refreshToolbarItem() -> some View {
-        Button(action: {
-            Task
-            {
-                await fetchRecipes()
-            }
-        })
-        {
-            Image(systemName: "arrow.clockwise")
         }
     }
     
@@ -100,4 +79,35 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+}
+
+// MARK: Helper methods moved to an extension to improve readability.
+extension ContentView
+{
+    fileprivate func fetchRecipes() async {
+        do
+        {
+            let fetchedRecipes = try await recipeFetcher.fetchRecipes()
+            recipes = fetchedRecipes
+            if recipes.isEmpty
+            {
+                showEmptyDataView = true
+            }
+        } catch {
+            recipes = [Recipe]()
+            showEmptyDataView = true
+        }
+    }
+    
+    fileprivate func refreshToolbarItem() -> some View {
+        Button(action: {
+            Task
+            {
+                await fetchRecipes()
+            }
+        })
+        {
+            Image(systemName: "arrow.clockwise")
+        }
+    }
 }

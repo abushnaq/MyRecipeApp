@@ -2,20 +2,19 @@
 //  RecipeFetcher.swift
 //  MyRecipeApp
 //
-//  Created by Ahmad Remote on 10/16/24.
+//  Created by Ahmad Bushnaq on 10/16/24.
 //
 
-import UIKit
+import Foundation
 
+// we can expand these as we build out the app.
 enum RecipeError : Error, Equatable {
     case networkError(String)
     case parsingError(String)
 }
 
-// Add note here why force unwrap is fine.
+// Force unwrapping here is fine since string is constant.
 let recipeURL = URL(string:"https://d3jbb8n5wk0qxi.cloudfront.net/recipes.json")!
-let emptyRecipeURL = URL(string:"https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!
-let malformedRecipeURL = URL(string:"https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json")!
 
 class RecipeFetcher: NSObject {
     let recipeURL : URL
@@ -27,6 +26,7 @@ class RecipeFetcher: NSObject {
         var recipeDictionary = [String : [Recipe]]()
         do
         {
+            // second parameter here is the response. For more complex apps we can capture the response and maybe present a different error message depending on what http code we get.
             (data, _) = try await URLSession.shared.data(from: recipeURL)
         } catch
         {

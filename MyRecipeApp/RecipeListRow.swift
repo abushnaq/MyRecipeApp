@@ -15,7 +15,7 @@ struct RecipeListRow: View {
     var body: some View {
         HStack
         {
-            KFImage(URL(string: recipeImage)!)
+            KFImage(URL(string: recipeImage))
                 .placeholder { Image("placeholder") }
                 .scaleFactor(UIScreen.main.scale)
                 .resizable()

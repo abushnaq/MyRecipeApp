@@ -9,6 +9,10 @@ import Testing
 import Foundation
 @testable import MyRecipeApp
 
+// force unwrap here is fine since they're constants
+let emptyRecipeURL = URL(string:"https://d3jbb8n5wk0qxi.cloudfront.net/recipes-empty.json")!
+let malformedRecipeURL = URL(string:"https://d3jbb8n5wk0qxi.cloudfront.net/recipes-malformed.json")!
+
 struct MyRecipeAppTests {
     @Test func testRecipesFetch() async throws {
         let recipeFetcher = RecipeFetcher(recipeURL)
