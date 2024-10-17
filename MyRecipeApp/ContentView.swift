@@ -5,12 +5,24 @@
 //  Created by Ahmad Bushnaq on 10/16/24.
 //
 
+/*
+ Need to add comments in various places
+ swipe action to do source and youtube links
+ 
+ 
+ test on ipad
+ check requirements
+ 
+ */
+
+
 import SwiftUI
 
 let kEmptyData = "No data returned. Please try again later."
 
 struct ContentView: View {
     @State var recipes : [Recipe] = [Recipe]()
+    @State var showEmptyDataView : Bool = false
     var filteredRecipes : [Recipe] {
         if searchText.isEmpty {
             return recipes
@@ -30,52 +42,53 @@ struct ContentView: View {
         {
             let fetchedRecipes = try await recipeFetcher.fetchRecipes()
             recipes = fetchedRecipes
+            if recipes.isEmpty
+            {
+                showEmptyDataView = true
+            }
         } catch {
             recipes = [Recipe]()
+            showEmptyDataView = true
         }
     }
     
-    fileprivate func refreshToolbarItem() -> ToolbarItem<(), Button<Image>> {
-        return ToolbarItem() {
-            Button(action: {
-                Task
-                {
-                    await fetchRecipes()
-                }
-            })
+    fileprivate func refreshToolbarItem() -> some View {
+        Button(action: {
+            Task
             {
-                Image(systemName: "arrow.clockwise")
+                await fetchRecipes()
             }
-            
+        })
+        {
+            Image(systemName: "arrow.clockwise")
         }
     }
     
     var body: some View {
         NavigationView
         {
-            if recipes.count == 0
+            if showEmptyDataView
             {
-                // how to remove duplicates
                 NoDataView(errorMessage: kEmptyData)
                     .toolbar()
                 {
                     refreshToolbarItem()
                 }.navigationTitle("My Recipes")
             }
-            List() {
-                ForEach(filteredRecipes) { recipe in
-                    RecipeListRow(recipeImage: recipe.smallPhotoURL, recipeName: recipe.name, cuisine: recipe.cuisine)
-                }
-            }.searchable(text: $searchText, prompt: "Search recipes")
-                .navigationTitle("My Recipes")
-            
-                .toolbar()
+            else
             {
-                refreshToolbarItem()
+                List() {
+                    ForEach(filteredRecipes) { recipe in
+                        RecipeListRow(recipeImage: recipe.smallPhotoURL, recipeName: recipe.name, cuisine: recipe.cuisine)
+                    }
+                }.searchable(text: $searchText, prompt: "Search recipes")
+                    .navigationTitle("My Recipes")
+                    .toolbar()
+                {
+                    refreshToolbarItem()
+                }
             }
-        }
-        
-            .onAppear()
+        }.onAppear()
         {
             Task
             {

@@ -2,7 +2,7 @@
 //  RecipeListRow.swift
 //  MyRecipeApp
 //
-//  Created by Ahmad Remote on 10/16/24.
+//  Created by Ahmad Bushnaq on 10/16/24.
 //
 
 import SwiftUI
@@ -15,10 +15,14 @@ struct RecipeListRow: View {
     var body: some View {
         HStack
         {
-            KFImage(URL(string: recipeImage)!)                
+            KFImage(URL(string: recipeImage)!)
                 .placeholder { Image("placeholder") }
                 .scaleFactor(UIScreen.main.scale)
+                .resizable()
                 .clipShape(.circle)
+                .frame(width: 75.0, height: 75.0)
+                .clipped()
+                .aspectRatio(contentMode: .fit)
                 
             VStack(alignment: .leading)
             {
