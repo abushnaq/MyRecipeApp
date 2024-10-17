@@ -19,9 +19,11 @@ struct RecipeListRow: View {
                 .placeholder { Image("placeholder") }
                 .scaleFactor(UIScreen.main.scale)
                 .resizable()
+                .border(.gray, width: 2.0)
                 .clipShape(.circle)
                 .frame(width: 75.0, height: 75.0)
                 .clipped()
+                
                 .aspectRatio(contentMode: .fit)
                 
             VStack(alignment: .leading)
@@ -37,5 +39,5 @@ struct RecipeListRow: View {
 }
 
 #Preview {
-    RecipeListRow(recipeImage: "", recipeName: "Burgers", cuisine: "American")
+    RecipeListRow(recipeImage: "https://d3jbb8n5wk0qxi.cloudfront.net/photos/b9ab0071-b281-4bee-b361-ec340d405320/small.jpg", recipeName: "Burgers", cuisine: "American")
 }

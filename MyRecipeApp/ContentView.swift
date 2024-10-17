@@ -59,6 +59,26 @@ struct ContentView: View {
                 List() {
                     ForEach(filteredRecipes) { recipe in
                         RecipeListRow(recipeImage: recipe.smallPhotoURL, recipeName: recipe.name, cuisine: recipe.cuisine)
+                            .selectionDisabled()
+                            .swipeActions()
+                        {
+                            if let recipeURL = recipe.youtubeURL {
+                                Link(destination: recipeURL)
+                                {
+                                    Image(systemName: "video.fill")
+                                        .font(.largeTitle)
+                                    Text("YouTube")
+                                }.tint(.red)
+                            }
+                            if let recipeSource = recipe.sourceURL {
+                                Link(destination: recipeSource)
+                                {
+                                    Image(systemName: "link.circle.fill")
+                                        .font(.largeTitle)
+                                    Text("Source")
+                                }.tint(.green)
+                            }
+                        }
                     }
                 }.searchable(text: $searchText, prompt: "Search recipes")
                     .navigationTitle("My Recipes")
